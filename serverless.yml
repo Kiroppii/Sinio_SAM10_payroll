@@ -1,0 +1,32 @@
+
+service: sinio-payroll-api
+
+provider:
+  name: aws
+  region: us-east-1
+  stage: dev
+  environment:
+    S3_BUCKET: sinio-payroll-2026
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+          Resource: arn:aws:s3:::sinio-payroll-2026/payslips/*
+
+plugins:
+  - ./vendor/bref/bref
+
+functions:
+  api:
+    handler: index.php
+    runtime: php-82-fpm
+    timeout: 28
+    events:
+      - httpApi: '*'
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!tests/**'
